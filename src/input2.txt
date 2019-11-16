@@ -1,0 +1,7 @@
+[p, q].
+p.
+[
+   [1, q, premise],
+   [2, p, premise]
+].
+
