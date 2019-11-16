@@ -1,0 +1,7 @@
+[X, neg(X)].
+cont.
+[
+   [1, neg(X), premise],
+   [2, X,      premise],
+   [3, cont,   negel(1, 2)]
+].

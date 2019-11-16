@@ -1,0 +1,6 @@
+[and(p, q)].
+p.
+[
+   [1, and(p, q), premise],
+   [2, p,         andel1(1)]
+].

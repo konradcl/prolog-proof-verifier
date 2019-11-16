@@ -1,0 +1,7 @@
+[X, imp(X, Y)].
+Y.
+[
+   [1, X,         premise],
+   [2, imp(X, Y), premise],
+   [3, Y,         impel(1, 2)]
+].
