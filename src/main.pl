@@ -16,7 +16,7 @@ verify_end(Conclusion, Proof) :-
     nth0(1, Line, ProofConclusion), % select ProofConclusion
     Conclusion = ProofConclusion.
 
-% HELLO!!!:
+% test 2
 % Recursively verifies the proof line by line.
 %
 % [H|T] = Proof
