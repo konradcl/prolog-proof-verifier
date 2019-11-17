@@ -7,9 +7,6 @@ verify(InputFileName) :-
 % The proof is valid if the proof ends with the sequent's
 % conclusion.
 valid_proof(Premises, Conclusion, Proof) :- 
-   writeln(Premises),
-   writeln(Conclusion),
-   writeln(Proof),
    verify_end(Conclusion, Proof),
    verify_proof(Premises, Proof, []).
 
@@ -26,14 +23,33 @@ verify_end(Conclusion, Proof) :-
 % VerifiedNew: previously and newly verified proof lines
 verify_proof(_, []) :- !.
 verify_proof(Premises, [H|T], Verified) :-
-   premise(Premises, H); 
-   rule(H, Verified),
+   premise(Premises, H);
+   rule(H, Verified);
+   assumption(
+      Premises, 
+      [[_R, _Formula, assumption] | T], 
+      Verified
+   ),
    append(Verified, H, VerifiedNew),
    verify_proof(Premises, T, VerifiedNew).
 
 premise(_, []) :- !.
 premise(Premises, [_, Formula, premise]) :-
    member(Formula, Premises).
+
+% ASSUMPTION
+assumption(
+   Premises, 
+   [[R, Formula, assumption] | T],
+   Verified
+) :-
+   append(Premises, Verified, Temp),
+   append(Temp, [R, Formula, assumption], BoxPremises),
+   verify_proof(
+      BoxPremises,
+      [[R, Formula, assumption] | T],
+      []
+   ).
 
 % LAW OF EXCLUDED MIDDLE
 % NOT WORKING!!!
@@ -89,6 +105,10 @@ rule([_, Y, impel(R1, R2)], Verified) :-
    member([R2, imp(X, Y), _], Verified).
 
 % NEGATION INTRODUCTION
+rule([_, neg(X), negint(R1, R2)], Verified) :-
+   member([[R1, X, assumption] | T], Verified),
+   last(T, BoxConclusion),
+   [R2, cont, _] = BoxConclusion.
 
 % NEGATION ELIMINATION
 rule([_, cont, negel(R1, R2)], Verified) :-
