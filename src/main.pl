@@ -24,12 +24,7 @@ verify_end(Conclusion, Proof) :-
 verify_proof(_, []) :- !.
 verify_proof(Premises, [H|T], Verified) :-
    premise(Premises, H);
-   rule(H, Verified);
-   assumption(
-      Premises, 
-      [[_R, _Formula, assumption] | T], 
-      Verified
-   ),
+   rule(H, Verified),
    append(Verified, H, VerifiedNew),
    verify_proof(Premises, T, VerifiedNew).
 
@@ -89,12 +84,6 @@ rule([_, or(_, X), orint2(R)], Verified) :-
 rule([_, Y, impel(R1, R2)], Verified) :-
    member([R1, X, _], Verified),
    member([R2, imp(X, Y), _], Verified).
-
-% NEGATION INTRODUCTION
-rule([_, neg(X), negint(R1, R2)], Verified) :-
-   member([[R1, X, assumption] | T], Verified),
-   last(T, BoxConclusion),
-   [R2, cont, _] = BoxConclusion.
 
 % NEGATION ELIMINATION
 rule([_, cont, negel(R1, R2)], Verified) :-
