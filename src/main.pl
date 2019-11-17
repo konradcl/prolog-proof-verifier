@@ -37,20 +37,6 @@ premise(_, []) :- !.
 premise(Premises, [_, Formula, premise]) :-
    member(Formula, Premises).
 
-% ASSUMPTION
-assumption(
-   Premises, 
-   [[R, Formula, assumption] | T],
-   Verified
-) :-
-   append(Premises, Verified, Temp),
-   append(Temp, [R, Formula, assumption], BoxPremises),
-   verify_proof(
-      BoxPremises,
-      [[R, Formula, assumption] | T],
-      []
-   ).
-
 % LAW OF EXCLUDED MIDDLE
 % NOT WORKING!!!
 rule([_, or(X, neg(X)), lem], _Verified).
