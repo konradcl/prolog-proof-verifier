@@ -8,7 +8,7 @@ verify(InputFileName) :-
 % conclusion.
 valid_proof(Premises, Conclusion, Proof) :- 
    verify_end(Conclusion, Proof),
-   verify_proof(Premises, Proof, []).
+   verify_proof(Premises, Proof, Premises).
 
 % Verifies that proof ends with the sequent's conclusion.
 verify_end(Conclusion, Proof) :-
@@ -23,13 +23,12 @@ verify_end(Conclusion, Proof) :-
 % VerifiedNew: previously and newly verified proof lines
 verify_proof(_, []) :- !.
 verify_proof(Premises, [H|T], Verified) :-
-   premise(Premises, H);
    rule(H, Verified),
    append(Verified, H, VerifiedNew),
    verify_proof(Premises, T, VerifiedNew).
 
-premise(_, []) :- !.
-premise(Premises, [_, Formula, premise]) :-
+% PREMISE
+rule([_, Formula, premise], Premises) :-
    member(Formula, Premises).
 
 % LAW OF EXCLUDED MIDDLE
