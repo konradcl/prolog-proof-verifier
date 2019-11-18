@@ -97,11 +97,22 @@ rule(_, [_, or(_, X), orint2(R)], Verified) :-
    member([R, X, _], Verified).
 
 % OR ELIMINATION (requires assumptions)
-% rule([_, X, orel(R, S1, S2, T1, T2)], Verified) :-
-%    member([R, or(A, B), _], Verified),
-%    member([])
+rule(_, [_, X, orel(R, S1, S2, T1, T2)], Verified) :-
+   member([R, or(A, B), _], Verified),
+   
+   member([[S1, A, assumption] | TailS], Verified),
+   last(TailS, BoxConclusionS),
+   [S2, X, _] = BoxConclusionS,
+
+   member([[T1, B, assumption] | TailT], Verified),
+   last(TailT, BoxConclusionT),
+   [T2, X, _] = BoxConclusionT.
 
 % IMPLICATION INTRODUCTION
+rule(_, [_, imp(X, Y), impint(R1, R2)], Verified) :-
+   member([[R1, X, assumption] | T], Verified),
+   last(T, BoxConclusion),
+   [R2, Y, _] = BoxConclusion.
 
 % IMPLICATION ELIMINATION
 rule(_, [_, Y, impel(R1, R2)], Verified) :-
@@ -127,4 +138,10 @@ rule(_, [_, _X, contel(R)], Verified) :-
 rule(_, [_, neg(X), mt(R1, R2)], Verified) :-
    member([R1, imp(X, Y), _], Verified),
    member([R2, neg(Y), _], Verified).
+
+% PROOF BY CONTRADICTION
+rule(_, [_, X, pbc(R1, R2)], Verified) :-
+   member([[R1, neg(X), assumption] | T], Verified),
+   last(T, BoxConclusion),
+   [R2, cont, _] = BoxConclusion.
 

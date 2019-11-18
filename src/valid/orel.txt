@@ -1,0 +1,14 @@
+[or(p, q)].
+or(q, p).
+[
+   [1,      or(p, q),   premise],
+   [
+      [2,   p,          assumption],
+      [3,   or(q, p),   orint2(2)]
+   ],
+   [
+      [4,   q,          assumption],
+      [5,   or(q, p),   orint1(4)]
+   ],
+   [6,      or(q, p),   orel(1, 2, 3, 4, 5)]
+].
