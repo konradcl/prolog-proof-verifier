@@ -119,7 +119,7 @@ rule(_, [_, X, orel(R, S1, S2, T1, T2)], Verified) :-
 % IMPLICATION INTRODUCTION
 rule(_, [_, imp(X, Y), impint(R1, R2)], Verified) :-
    member([[R1, X, assumption] | T], Verified),
-   last(T, BoxConclusion),
+   last([[R1, X, assumption] | T], BoxConclusion),
    [R2, Y, _] = BoxConclusion.
 
 % IMPLICATION ELIMINATION
