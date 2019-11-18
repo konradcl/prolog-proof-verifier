@@ -25,8 +25,6 @@ verify_end(Conclusion, Proof) :-
 % VerifiedNew: previously and newly verified proof lines
 verify_proof(_, [], _) :- !.
 verify_proof(Premises, [H|T], Verified) :-
-   % writeln(Verified),
-   % writeln(H),
    rule(Premises, H, Verified),
    append(Verified, [H], VerifiedNew),
    verify_proof(Premises, T, VerifiedNew).
@@ -40,23 +38,33 @@ rule(Premises, [_, Formula, premise], _) :-
 % ----------
 
 % [H|T] = Verified
-append_premises(_, [], _) :- !.
-append_premises(Premises, [H|VerifiedLines], PremisesNew) :-
-   nth0(1, H, Premise),
-   append(Premises, [Premise], PremisesNew),
-   append_premises(PremisesNew, VerifiedLines, _).
+% append_premises(_, [], _) :- !.
+% append_premises(Premises, [H|VerifiedLines], PremisesNew) :-
+%    nth0(1, H, Premise),
+%    append(Premises, [Premise], PremisesNew),
+%    append_premises(PremisesNew, VerifiedLines, _).
 
+% rule(Premises, [[R, Formula, assumption] | T], Verified) :-
+%    append_premises(Premises, Verified, TempPremises),
+%    append(TempPremises, [Formula], BoxPremises),
+%    % Writing '_' instead of '[]' in the below "verify_proof"
+%    % statement makes "negint.txt" evaluate to true.
+%    % WHY ???
+%    verify_proof(
+%       BoxPremises, [[R, Formula, premise] | T], _
+%    ).
+
+% [Assumption | T] = Box Proof,
+%     Assumption = [R, Formula, assumption]
 rule(Premises, [[R, Formula, assumption] | T], Verified) :-
-   append_premises(Premises, Verified, TempPremises),
-   append(TempPremises, [Formula], BoxPremises),
-   % Writing '_' instead of '[]' in the below "verify_proof"
-   % statement makes "negint.txt" evaluate to true.
-   % WHY ???
+   append(Verified, [[R, Formula, assumption]], VerifiedNew),
    verify_proof(
-      BoxPremises, [[R, Formula, premise] | T], _
+      Premises, 
+      T, 
+      VerifiedNew
    ).
 
-% LAW OF EXCLUDED MIDDLE
+%LAW OF EXCLUDED MIDDLE
 rule(_, [_, or(X, neg(X)), lem], _Verified).
 
 % COPY
