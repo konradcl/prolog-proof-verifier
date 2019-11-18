@@ -1,3 +1,5 @@
+:- discontiguous(rule/3).
+
 verify(InputFileName) :-
   see(InputFileName),
   read(Premises), read(Conclusion), read(Proof),
@@ -23,8 +25,8 @@ verify_end(Conclusion, Proof) :-
 % VerifiedNew: previously and newly verified proof lines
 verify_proof(_, [], _) :- !.
 verify_proof(Premises, [H|T], Verified) :-
-   writeln(Verified),
-   writeln(H),
+   % writeln(Verified),
+   % writeln(H),
    rule(Premises, H, Verified),
    append(Verified, [H], VerifiedNew),
    verify_proof(Premises, T, VerifiedNew).
@@ -33,8 +35,28 @@ verify_proof(Premises, [H|T], Verified) :-
 rule(Premises, [_, Formula, premise], _) :-
    member(Formula, Premises).
 
+% ----------
+% ASSUMPTION
+% ----------
+
+% [H|T] = Verified
+append_premises(_, [], _) :- !.
+append_premises(Premises, [H|VerifiedLines], PremisesNew) :-
+   nth0(1, H, Premise),
+   append(Premises, [Premise], PremisesNew),
+   append_premises(PremisesNew, VerifiedLines, _).
+
+rule(Premises, [[R, Formula, assumption] | T], Verified) :-
+   append_premises(Premises, Verified, TempPremises),
+   append(TempPremises, [Formula], BoxPremises),
+   % Writing '_' instead of '[]' in the below "verify_proof"
+   % statement makes "negint.txt" evaluate to true.
+   % WHY ???
+   verify_proof(
+      BoxPremises, [[R, Formula, premise] | T], _
+   ).
+
 % LAW OF EXCLUDED MIDDLE
-% NOT WORKING!!!
 rule(_, [_, or(X, neg(X)), lem], _Verified).
 
 % COPY
@@ -86,6 +108,12 @@ rule(_, [_, Y, impel(R1, R2)], Verified) :-
    member([R1, X, _], Verified),
    member([R2, imp(X, Y), _], Verified).
 
+% NEGATION INTRODUCTION
+rule(_, [_, neg(X), negint(R1, R2)], Verified) :-
+   member([[R1, X, assumption] | T], Verified),
+   last(T, BoxConclusion),
+   [R2, cont, _] = BoxConclusion.
+
 % NEGATION ELIMINATION
 rule(_, [_, cont, negel(R1, R2)], Verified) :-
    member([R1, X, _], Verified),
@@ -96,7 +124,7 @@ rule(_, [_, _X, contel(R)], Verified) :-
    member([R, cont, _], Verified).
 
 % MODUS TOLLENS
-rule(_, [_, neg(X), mt(R1, R2)]) :-
+rule(_, [_, neg(X), mt(R1, R2)], Verified) :-
    member([R1, imp(X, Y), _], Verified),
    member([R2, neg(Y), _], Verified).
 
