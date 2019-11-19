@@ -1,0 +1,10 @@
+[neg(or(p, q))].
+and(neg(p), neg(q)).
+[
+   [1,   neg(or(p, q)),          premise],
+   [
+      [2,   or(p, q),            assumption],
+      [3,   cont,                negel(2, 1)]
+   ],
+   [4,   and(neg(p), neg(q)),    negint(2, 3)]
+].

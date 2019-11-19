@@ -58,11 +58,7 @@ rule(Premises, [_, Formula, premise], _) :-
 %     Assumption = [R, Formula, assumption]
 rule(Premises, [[R, Formula, assumption] | T], Verified) :-
    append(Verified, [[R, Formula, assumption]], VerifiedNew),
-   verify_proof(
-      Premises, 
-      T, 
-      VerifiedNew
-   ).
+   verify_proof(Premises, T, VerifiedNew).
 
 %LAW OF EXCLUDED MIDDLE
 rule(_, [_, or(X, neg(X)), lem], _Verified).
