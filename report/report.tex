@@ -19,6 +19,9 @@
 \setlength{\parindent}{0px}
 \renewcommand{\baselinestretch}{1.325}
 
+% Change Paragraph Spacing
+\usepackage{setspace}
+
 % Double quotes, \say{}.
 \usepackage{dirtytalk}
 
@@ -34,7 +37,44 @@ Lab 2 $-$ DD1351}
 
 \begin{document}
    \maketitle
+
+   \section{Introduction}
+   Natural deduction is a proof calculus comprised of a set of
+   inference rules that are used to infer formulas from other
+   formulas. The rules can be categorized into introduction
+   and elimination rules. The former combine or negate
+   formulas by introducing connectives; the latter decompose
+   them by eliminating connectives. These rules are defined in
+   terms of formula patterns that must hold true for a 
+   connective to be introduced or eliminated. For instance, to
+   claim the formula $\phi \wedge \psi$, it must be known that
+   both of the formulas $\phi$ and $\psi$ are true. Prolog is
+   a logic programming language that enables easy expression 
+   of logical statements. To exemplify, the Prolog code
    
+   \begin{verbatim}
+   rule(_, [_, and(X, Y), andint(R1, R2)], Verified) :-
+      member([R1, X, _], Verified),
+      member([R2, Y, _], Verified).
+   \end{verbatim}
+   
+   states that $\phi \wedge \psi$ can be concluded, by the and
+   introduction rule,
+   
+   The application of said rules 
+   are controlled
+   
+   All rules of natural deduction operate on
+   propositional atoms, and recursively on the formulas that
+   can be constructed by applying the rules on the atoms, to
+   create new formulas by either introducing or eliminating
+   connectives. The rules are defined in terms of the
+   
+   For instance, it may be concluded that 
+   $\phi: \neg (p \vee q)$ is logically equivalent to 
+   $\psi: \neg p \wedge \neg q$ in the sense that $\phi$ is
+   true if, and only if, $\psi$ is true. Thse
+
    \textbf{Valid Proof of de Morgan's Law} \\
    The following is a valid proof of one of de Morgan's laws.
    Specifically, it proves the sequent 
@@ -240,4 +280,209 @@ rule(Premises, [[R, Formula, assumption] | T], Verified) :-
    rule, can only be used to conclude $\neg (p \vee q)$, and
    not $\neg p \vee \neg q$.
 
+\begin{table}[t]
+\centering
+\begin{tabular}{|l|l|l|}
+   \hline
+      \textbf{Predicate} 
+      & \textbf{Parameters}                                  
+      & \textbf{Truth Conditions} \\
+   \hline
+      \texttt{verify}             
+      & \texttt{InputFileName}  
+      & \texttt{valid\_proof} \\
+   \hline
+      \texttt{valid\_proof}       
+      & \begin{tabular}[c]{@{}l@{}}
+         \texttt{Premise} \\ 
+         \texttt{Conclusion} \\ 
+         \texttt{Proof}
+      \end{tabular}          
+      & \begin{tabular}[c]{@{}l@{}}
+         \texttt{verify\_end} \\
+         \texttt{verify\_proof} 
+      \end{tabular} \\  
+   \hline
+      \texttt{verify\_end}        
+      & \begin{tabular}[c]{@{}l@{}}
+         \texttt{Conclusion} \\ 
+         \texttt{Proof}
+      \end{tabular}                    
+      & Proof ends with sequent's conclusion. \\
+   \hline
+      \texttt{verify\_proof}      
+      & \begin{tabular}[c]{@{}l@{}}
+         \texttt{Premises} \\ 
+         \texttt{Proof} \\ 
+         \texttt{Verified}
+      \end{tabular}           
+      & \begin{tabular}[c]{@{}l@{}}
+         The first line, and recursively all \\ 
+         subsequent lines, are provable by \\ 
+         natural deduction.
+      \end{tabular} \\ 
+   \hline
+      \texttt{rule}               
+      & \begin{tabular}[c]{@{}l@{}}
+         \texttt{Premises} \\ 
+         \texttt{Line/Box} \\ 
+         \texttt{Verified}
+      \end{tabular} 
+      & \begin{tabular}[c]{@{}l@{}}
+         If the second argument is an \\
+         assumption box, \texttt{rule} is true if \\
+         the sub-proof of the box is valid \\
+         (i.e. if \texttt{verify\_proof} returns true \\
+         when invoked with the sub-proof as \\
+         its \texttt{Proof} argument).
+         \\ \\
+         If the second argument is a line, the \\
+         conditions determining the return \\ 
+         value of \texttt{rule} differ based on what \\
+         deduction rule was used to arrive at \\ 
+         the formula on the line. 
+         \\ \\
+         For lines that are \textit{premises}, the \\
+         \texttt{Formula} on the line must exist in \\
+         the \texttt{Premises} of the proof.
+         \\ \\
+         For lines that are deduced by the \\ 
+         \textit{copy} rule, the copied formula must \\
+         appear previously in the proof \\
+         (i.e. be a member of \texttt{Verified}).
+         \\ \\
+         For lines with a formula $\neg \neg \phi$, that is \\
+         deduced by \textit{double negation}, \\
+         \textit{introduction}, the formula $\phi$ must \\
+         appear previously in the proof (i.e. \\
+         exist in \texttt{Verified}). 
+         \\ \\
+         For lines with a formula $\phi$ that is \\
+         deduced by \textit{double negation} \\ 
+         \textit{elimination}, the formula $\neg \neg \phi$
+         must \\
+         appear previously in the proof (i.e \\
+         exist in \texttt{Verified}).
+      \end{tabular} \\ 
+   \hline
+\end{tabular}
+\end{table}
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{|l|l|l|}
+   \hline
+      \textbf{Predicate} 
+      & \textbf{Parameters}                                  
+      & \textbf{Truth Conditions} \\
+   \hline
+      & &
+      \begin{tabular}[c]{@{}l@{}}
+         For a line with a formula $\phi \wedge \psi$ that \\
+         is deduced by \textit{and introduction}, the \\
+         formulas $\phi$ and $\psi$ must appear \\
+         previously in the proof (i.e. exist in \\
+         \texttt{Verified}).
+         \\ \\
+         For a line with a formula $\phi$, that is \\
+         deduced by \textit{first and elimination}, a \\
+         formula of the form $\phi \wedge \psi$ must \\
+         appear previously in the proof (i.e. \\
+         exist in \texttt{Verified}).
+         \\ \\
+         For a line with a formula $\phi$, that is \\
+         deduced by \textit{second and elimination}, \\
+         a formula of the form $\psi \wedge \phi$ must \\
+         appear previously in the proof (i.e. \\
+         exist in \texttt{Verified}).
+         \\ \\
+         For a line with a formula $\phi \vee \psi$, that \\
+         is deduced by \textit{first or introduction}, \\
+         a formula $\phi$ must appear previously \\
+         in the proof (i.e. exist in \texttt{Verified}).
+         \\ \\
+         For a line with a formula $\phi \vee \psi$, that \\
+         is deduced by \textit{second or introduction}, \\
+         a formula $\psi$ must appear previously \\
+         in the proof (i.e. exist in \texttt{Verified}).
+         \\ \\
+         For a line with a formula $\chi$, that is \\
+         deduced by \textit{or elimination}, a formula \\
+         $\phi \vee \psi$, a box assuming $\phi$ and ending \\
+         in $\chi$, and a box assuming $\psi$ and \\
+         ending in $\chi$, must appear previously \\
+         in the proof (i.e. exist in \texttt{Verified}).
+         \\ \\
+         For a line with a formula $\phi \rightarrow \psi$, \\
+         that is deduced by \textit{implication} \\
+         \textit{introduction}, a box assuming $\phi$ and \\
+         concluding in $\psi$ must appear \\
+         previously in the proof (i.e. exist in \\
+         \texttt{Verified})
+      \end{tabular} \\
+   \hline
+\end{tabular}
+\end{table}
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{|l|l|l|}
+   \hline
+      \textbf{Predicate} 
+      & \textbf{Parameters}                                  
+      & \textbf{Truth Conditions} \\
+   \hline
+      & &
+      \begin{tabular}[c]{@{}l@{}}
+         For a line with a formula $\psi$ that is \\
+         deduced by \textit{implication elimination} \\
+         a formula $\phi$, and a box assuming $\phi$ \\
+         and ending in $\psi$, must appear \\
+         previously in the proof (i.e. exist in \\
+         \texttt{Verified}).
+         \\ \\
+         For a line with a formula $\neg \phi$ that is \\
+         deduced by \textit{negation introduction} a \\
+         box assuming $\phi$ and concluding in $\perp$ \\
+         must appear previously in the proof \\
+         (i.e. exist in \texttt{Verified}).
+         \\ \\
+         For a line with a contradiction $\perp$ \\
+         that is deduced by \textit{negation} \\
+         \textit{elimination} two formulas $\phi$ and 
+         $\neg \phi$ \\
+         must appear previously in the proof \\
+         (i.e. exist in \texttt{Verified}).
+         \\ \\
+         For a line with a formula $\phi$ that is \\
+         deduced by \textit{contradiction} \\
+         \textit{elimination} a line with a \\
+         contradiction $\perp$ must appear \\
+         previously in the proof (i.e. exist \\
+         in \texttt{Verified}).
+         \\ \\
+         For a line with a formula $\neg \phi$ that is \\
+         deduced by \textit{modus tollens} a formula \\
+         $\phi \rightarrow \psi$, and a formula $\neg \psi$,
+         must \\
+         appear previously in the proof (i.e. \\
+         exist in \texttt{Verified}).
+         \\ \\
+         For a line with a formula $\phi$ that is \\
+         derived by a \textit{proof by contradiction} \\
+         a box assuming $\neg \phi$ and ending in a \\
+         contradiction $\perp$ must appear \\
+         previously in the proof (i.e. exist in \\
+         \texttt{Verified}).
+         \\ \\
+         By the \textit{law of the excluded middle} a \\
+         line with a formula of the form 
+         $\phi \vee \neg \phi$ \\
+         is always valid.
+      \end{tabular} \\
+   \hline
+\end{tabular}
+\end{table}
+
 \end{document}
+
