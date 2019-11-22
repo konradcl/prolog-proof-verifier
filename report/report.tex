@@ -29,6 +29,17 @@
 \usepackage{etoolbox}
 \AtBeginEnvironment{quote}{\singlespacing\small}
 
+% Links
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,
+    urlcolor=[rgb]{0.9, 0.56, 0.46},
+}
+ 
+\urlstyle{same}
+
 % Title
 \title{Natural Deduction Proof Verifier} 
 \author{Konrad M. L. Claesson\\ konradcl@kth.se\\ 
@@ -111,6 +122,22 @@ Lab 2 $-$ DD1351}
    \ref{assumption-handling}, respectively. 
    Thereafter, two examples of how the algorithm verifies
    proofs are given.
+
+   \subsection{Input Handling}
+   \label{input-handling}
+   \hl{TRANSLATE PAGE 5 OF INSTRUCTION DOCUMENT}
+
+   \subsection{The Recursive Helper Predicates}
+   \label{recursive-helper-predicates}
+
+   When the input file has been read, the verification
+   algorithm is initiated by a call to
+   \texttt{valid\_proof/3}. This helper predicate takes in the
+   \texttt{Premises}, \texttt{Proof} and \texttt{Conclusion}
+   from the input file and invokes 
+   \texttt{verify\_end(Conclusion, Proof)} and
+   \texttt{verify\_proof(Premises, Proof, [])}. In turn,
+   \texttt{verify\_end/2} 
 
    \subsection{Premise Handling}
    \label{premise-handling}
@@ -391,6 +418,16 @@ rule(Premises, [[R, Formula, assumption] | T], Verified) :-
    rule, can only be used to conclude $\neg (p \vee q)$, and
    not $\neg p \vee \neg q$.
 
+   \section{Results}
+   The algorithm correctly identified the validity of every
+   minimal, rule-specific, proof. It also accurately verified
+   each of the \hl{XX} multi-step proofs.
+   \bigbreak
+
+   The algorithm along with the proofs in an input-ready
+   format can be found by following this link: 
+   \url{https://github.com/konradcl/prolog-proof-verifier}
+
 \begin{table}[t]
 \centering
 \begin{tabular}{|l|l|l|}
@@ -594,6 +631,7 @@ rule(Premises, [[R, Formula, assumption] | T], Verified) :-
    \hline
 \end{tabular}
 \end{table}
+
 
 \end{document}
 

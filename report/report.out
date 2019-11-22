@@ -1,0 +1,11 @@
+\BOOKMARK [1][-]{section.1}{Introduction}{}% 1
+\BOOKMARK [1][-]{section.2}{Method}{}% 2
+\BOOKMARK [2][-]{subsection.2.1}{Input Handling}{section.2}% 3
+\BOOKMARK [2][-]{subsection.2.2}{The Recursive Helper Predicates}{section.2}% 4
+\BOOKMARK [2][-]{subsection.2.3}{Premise Handling}{section.2}% 5
+\BOOKMARK [2][-]{subsection.2.4}{Handling of Inference Rules}{section.2}% 6
+\BOOKMARK [2][-]{subsection.2.5}{Assumption Handling}{section.2}% 7
+\BOOKMARK [2][-]{subsection.2.6}{Example of Proof Verification}{section.2}% 8
+\BOOKMARK [3][-]{subsubsection.2.6.1}{Verification of a Valid Proof}{subsection.2.6}% 9
+\BOOKMARK [3][-]{subsubsection.2.6.2}{Verification of an Invalid Proof}{subsection.2.6}% 10
+\BOOKMARK [1][-]{section.3}{Results}{}% 11
