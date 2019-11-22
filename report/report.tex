@@ -71,7 +71,7 @@ Lab 2 $-$ DD1351}
    \begin{figure}
       \centering
       \includegraphics[scale=0.325]{inference-rules}
-      \caption{Algorithm-Supported Inference Rules}
+      \caption{Algorithm-Supported Proof Rules}
    \end{figure}
 
    \section{Method}
@@ -100,12 +100,47 @@ Lab 2 $-$ DD1351}
    list, usually named \texttt{Verified}, immediately after a
    \texttt{rule/3} predicate has declared them as
    \texttt{true}.
+   \bigbreak
+
+   Naturally, handling of the algorithm-supported rules breaks
+   down into premise handling, handling of inference rules,
+   and assumption handling. How each are handled is
+   described next in sections 
+   \ref{premise-handling},
+   \ref{handling-of-inference-rules}, and
+   \ref{assumption-handling}, respectively. 
+   Thereafter, two examples of how the algorithm validates or
+   invalidates a proof are given.
 
    \subsection{Premise Handling}
+   \label{premise-handling}
+   Lines that claim to be premises are verified by checking
+   that the \texttt{Formula} on the given line is a member of 
+   the proof's \texttt{Premises}. This is done by the below
+   code, 
+   
+\begin{verbatim}
+   rule(Premises, [_, Formula, premise], _) :-
+      member(Formula, Premises).
+\end{verbatim}
 
+   where the \texttt{member/2} predicate resolves
+   whether \texttt{Formula} is a member of \texttt{Premiss}. 
+   
    \subsection{Handling of Inference Rules}
+   \label{handling-of-inference-rules}
+
+   As described earlier, a line gets matched with a 
+   \texttt{rule/3} predicate based on the inference rule that 
+   was used to derive it. The following states under what
+   conditions each of the 17 inference rules evaluate to
+   \texttt{true}. An implementation of each rule can be found
+   in the algorithm source code in the appendix.
+   \bigbreak
+   \hl{INSERT TABLE}
 
    \subsection{Assumption Handling}
+   \label{assumption-handling}
    The most outstanding \texttt{rule/3} predicate is the one
    that handles assumptions. There are two reasons for this.
    Firstly, rather than being matched with lines that declare
