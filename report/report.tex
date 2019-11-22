@@ -74,6 +74,67 @@ Lab 2 $-$ DD1351}
       \caption{Algorithm-Supported Inference Rules}
    \end{figure}
 
+   \section{Method}
+   
+   A proof is valid if all of its line are valid. A line is
+   valid if it can be inferred by applying the rules of
+   natural deduction to the proof's premises and previously
+   inferred formulas. Accordingly, the validity of a proof can
+   be determined if, and only if, the premises and previously
+   derived formulas are known, and the required conditions for
+   the employment of all used rules are defined. To this end,
+   19 instances of the \texttt{rule/3} predicate were defined,
+   one for each rule from \hl{TABLE 1}, that given the
+   premises, a line, and all previous lines, returns 
+   \texttt{true} if the passed in line can be inferred from
+   the premises and previous lines, and \texttt{false}
+   otherwise. The set of all \texttt{rule/3} predicates 
+   achieve this behavior by, first, matching the rule used to
+   deduce the passed in line (which is specified at the end 
+   of the line) with the predicate handling that rule; and
+   secondly, verifying that the premises and derived formulas 
+   that were used to invoke the rule satisfy the conditions 
+   for its invocation. The premises of a proof are specified
+   in the input file to the algorithm and stored in a list
+   called \texttt{Premises}. Verified lines are appended to a 
+   list, usually named \texttt{Verified}, immediately after a
+   \texttt{rule/3} predicate has declared them as
+   \texttt{true}.
+
+   \subsection{Premise Handling}
+
+   \subsection{Handling of Inference Rules}
+
+   \subsection{Assumption Handling}
+   The most outstanding \texttt{rule/3} predicate is the one
+   that handles assumptions. There are two reasons for this.
+   Firstly, rather than being matched with lines that declare
+   themselves as \say{derived by assumption}, it is matched to
+   boxes (implemented as a list of lines) that start with an 
+   assumption. Secondly, unlike the other predicates, it does
+   not check for the fulfillment of a set of predefined
+   conditions; instead, it treats the lines of the box as a
+   proof in its own right, where the assumption becomes a
+   premise, and returns \texttt{true} only if the proof within
+   the box is valid. In this way, the algorithm handles
+   assumptions by regarding their associated boxes as 
+   sub-proofs that can be verified recursively.
+   \bigbreak
+
+   The subsequent code handles assumptions in the described
+   manner.
+
+\begin{verbatim}
+rule(Premises, [[R, Formula, assumption] | T], Verified) :-
+   append(Verified, [[R, Formula, assumption]], VerifiedNew),
+   verify_proof(Premises, T, VerifiedNew).
+\end{verbatim}
+  
+   Preimises is this. [[da...]] is proof box. Verified is
+   this. The append predicate appends the assumption to the
+   list of verified lines. Then, verify\_proof is recursively
+   called to verify the sub-proof within the box. 
+
    \textbf{Valid Proof of de Morgan's Law} \\
    The following is a valid proof of one of de Morgan's laws.
    Specifically, it proves the sequent 
