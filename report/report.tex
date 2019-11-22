@@ -105,12 +105,12 @@ Lab 2 $-$ DD1351}
    Naturally, handling of the algorithm-supported rules breaks
    down into premise handling, handling of inference rules,
    and assumption handling. How each are handled is
-   described next in sections 
+   described in sections 
    \ref{premise-handling},
    \ref{handling-of-inference-rules}, and
    \ref{assumption-handling}, respectively. 
-   Thereafter, two examples of how the algorithm validates or
-   invalidates a proof are given.
+   Thereafter, two examples of how the algorithm verifies
+   proofs are given.
 
    \subsection{Premise Handling}
    \label{premise-handling}
@@ -173,8 +173,19 @@ rule(Premises, [[R, Formula, assumption] | T], Verified) :-
    to the list of verified lines. Then, \texttt{verify\_proof}
    is recursively called to verify the sub-proof within the
    box.
+
+   \subsection{Example of Proof Verification}
+
+   In this subsection, two examples of how to proof
+   verification algorithm works are provided. First, a
+   detailed explanation of how the algorithm progresses from
+   accepting inputs to concluding the validity of a coherent 
+   proof is given. Then, a shorter description of the 
+   algorithm's behavior in the event of an invalid proof is 
+   presented.
    
-   \textbf{Valid Proof of de Morgan's Law} \\
+   \subsubsection{Verification of a Valid Proof}
+
    The following is a valid proof of one of de Morgan's laws.
    Specifically, it proves the sequent 
    $\neg(p \vee q) \vdash \neg p \wedge \neg q$.
@@ -352,7 +363,8 @@ rule(Premises, [[R, Formula, assumption] | T], Verified) :-
 
    \end{enumerate}
 
-   \textbf{Invalid Proof of de Morgan's Law} \\
+   \subsubsection{Verification of an Invalid Proof}
+   
    The following is an invalid proof of the same sequent as
    above. Lines one through three of the proposed lines are 
    deduced by rules that we have already discussed, and hence 
