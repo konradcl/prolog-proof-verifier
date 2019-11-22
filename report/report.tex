@@ -31,14 +31,12 @@
 
 % Links
 \usepackage{hyperref}
+\definecolor{urlblue}{RGB}{000, 106, 219}
 \hypersetup{
-    colorlinks=true,
-    linkcolor=blue,
-    filecolor=magenta,
-    urlcolor=[rgb]{0.9, 0.56, 0.46},
+   colorlinks=true,  % false: boxed links; true: colored links
+   linkcolor=black,  % color of internal links
+   urlcolor=urlblue
 }
- 
-\urlstyle{same}
 
 % Title
 \title{Natural Deduction Proof Verifier} 
@@ -132,14 +130,76 @@ Lab 2 $-$ DD1351}
 
    When the input file has been read, the verification
    algorithm is initiated by a call to
-   \texttt{valid\_proof/3}. This helper predicate takes in the
-   \texttt{Premises}, \texttt{Proof} and \texttt{Conclusion}
-   from the input file and invokes 
-   \texttt{verify\_end(Conclusion, Proof)} and
-   \texttt{verify\_proof(Premises, Proof, [])}. In turn,
-   \texttt{verify\_end/2} 
+   \texttt{valid\_proof/3}. 
+   
+\begin{verbatim}
+   VALID PROOF CODE
+\end{verbatim}
 
-   \subsection{Premise Handling}
+   This helper predicate takes in the
+   \texttt{Premises}, \texttt{Proof} and \texttt{Conclusion}
+   from the input file and invokes the 
+   \texttt{verify\_end(Conclusion, Proof)} and \\
+   \texttt{verify\_proof(Premises, Proof, [])} predicates.
+   \bigbreak
+
+   \texttt{verify\_end(Conclusion, Proof)} ensures 
+   that the final line of the proof is equal to the
+   sequent's conclusion. 
+   
+\begin{verbatim}
+   VERIFY END CODE
+\end{verbatim}
+   
+   This is achieved by
+   first applying Prolog's built-in \texttt{last/3}
+   predicate to extract the last element (line) in
+   \texttt{Proof}, and then utilizing \texttt{nth0/3} 
+   to select the formula present on the last line. If
+   the proof is valid, this formula is equal to
+   the sequent's conclusion. Accordingly, 
+   \texttt{verify\_end} concludes with an equality
+   check that ensures that the described equality
+   holds.
+   \bigbreak
+
+   \texttt{verify\_proof(Premises, Proof, Verified)}
+   recursively validates the provided proof
+   line-by-line, from top to bottom. 
+   
+\begin{verbatim}
+   VERIFY PROOF CODE
+\end{verbatim}
+
+   It validates each 
+   line (element in \texttt{Proof}) by invoking 
+   \texttt{rule/3} with the premises, line, and 
+   previously verified lines as arguments. 
+   \texttt{rule/3} then returns \texttt{true} whenever 
+   the line follows by natural deduction from the 
+   premises and previously verified lines, and false
+   otherwise. If a line is valid, it gets appended to
+   the \texttt{Verified} list and \texttt{verify\_proof}
+   is called again with the yet unverified lines and
+   the new list of verified lines.
+
+   \subsection{The Rule Predicate}
+   \texttt{rule/3} takes in the list of premises, a
+   line or assumption box, and the, as of then, 
+   verified lines of a proof. It then ensures that
+   the line or assumption box follows by natural
+   deduction from the premises and previous lines of
+   the proof. It does this by inspecting the last
+   element of each line, which specifies the
+   proof rule that was applied to deduce the
+   formula on that line, and then checking that the
+   conditions for using the rule are fulfilled.
+   \bigbreak
+
+   In the subsections ahead the various cases of
+   \texttt{rule/3} are explored in greater detail.
+
+   \subsubsection{Premise Handling}
    \label{premise-handling}
    Lines that claim to be premises are verified by checking
    that the \texttt{Formula} on the given line is a member of 
@@ -153,8 +213,8 @@ Lab 2 $-$ DD1351}
 
    where the \texttt{member/2} predicate resolves
    whether \texttt{Formula} is a member of \texttt{Premiss}. 
-   
-   \subsection{Handling of Inference Rules}
+
+   \subsubsection{Handling of Inference Rules}
    \label{handling-of-inference-rules}
 
    As described earlier, a line gets matched with a 
@@ -166,7 +226,7 @@ Lab 2 $-$ DD1351}
    \bigbreak
    \hl{INSERT TABLE}
 
-   \subsection{Assumption Handling}
+   \subsubsection{Assumption Handling}
    \label{assumption-handling}
    The most outstanding \texttt{rule/3} predicate is the one
    that handles assumptions. There are two reasons for this.
@@ -203,7 +263,7 @@ rule(Premises, [[R, Formula, assumption] | T], Verified) :-
 
    \subsection{Example of Proof Verification}
 
-   In this subsection, two examples of how to proof
+   In this subsection, two examples of how the proof
    verification algorithm works are provided. First, a
    detailed explanation of how the algorithm progresses from
    accepting inputs to concluding the validity of a coherent 
@@ -246,9 +306,9 @@ rule(Premises, [[R, Formula, assumption] | T], Verified) :-
    \begin{enumerate}
       \item \texttt{verify(InputFileName)} is called
             and reads in the proof from the specified file.
-            The premises are stored in an array called
+            The premises are stored in an list called
             \texttt{Premises}, the sequent's conclusion is
-            stored in \texttt{Conclusion}, and the array
+            stored in \texttt{Conclusion}, and the list
             containing the proof is stored in \texttt{Proof}.
 
       \item When Prolog has parsed the file, the rule
@@ -282,11 +342,11 @@ rule(Premises, [[R, Formula, assumption] | T], Verified) :-
          the line follows by natural deduction from the 
          premises and previously verified lines, and false
          otherwise. If a line is valid, it gets appended to
-         the \texttt{Verified} array and \texttt{verify\_proof}
+         the \texttt{Verified} list and \texttt{verify\_proof}
          is called again with the yet unverified lines and
-         the new array of verified lines.
+         the new list of verified lines.
 
-      \item \texttt{rule/3} takes in the array of premises, a
+      \item \texttt{rule/3} takes in the list of premises, a
             line or assumption box, and the, as of then, 
             verified lines of a proof. It then ensures that
             the line or assumption box follows by natural
@@ -320,7 +380,7 @@ rule(Premises, [[R, Formula, assumption] | T], Verified) :-
             which returns \texttt{true} if the sub-proof of the
             assumption box is valid. To verify that the
             assumption box contains a valid proof the
-            assumption line is appended to the array of
+            assumption line is appended to the list of
             verified lines, and \texttt{verify\_proof/3} is
             called to validate the sub-proof. Within the box,
             line three is verified by ensuring that its
@@ -426,7 +486,7 @@ rule(Premises, [[R, Formula, assumption] | T], Verified) :-
 
    The algorithm along with the proofs in an input-ready
    format can be found by following this link: 
-   \url{https://github.com/konradcl/prolog-proof-verifier}
+   \url{github.com/konradcl/prolog-proof-verifier}.
 
 \begin{table}[t]
 \centering
