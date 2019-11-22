@@ -47,7 +47,7 @@ Lab 2 $-$ DD1351}
    them by eliminating connectives. These rules are defined in
    terms of formula patterns that must hold true for a 
    connective to be introduced or eliminated. For instance, to
-   claim the formula $\phi \wedge \psi$, it must be known that
+   claim $\phi \wedge \psi$, it must be known that
    both of the formulas $\phi$ and $\psi$ are true. Prolog is
    a logic programming language that enables easy expression 
    of logical statements. To exemplify, the Prolog code
@@ -59,21 +59,15 @@ Lab 2 $-$ DD1351}
    \end{verbatim}
    
    states that $\phi \wedge \psi$ can be concluded, by the and
-   introduction rule,
-   
-   The application of said rules 
-   are controlled
-   
-   All rules of natural deduction operate on
-   propositional atoms, and recursively on the formulas that
-   can be constructed by applying the rules on the atoms, to
-   create new formulas by either introducing or eliminating
-   connectives. The rules are defined in terms of the
-   
-   For instance, it may be concluded that 
-   $\phi: \neg (p \vee q)$ is logically equivalent to 
-   $\psi: \neg p \wedge \neg q$ in the sense that $\phi$ is
-   true if, and only if, $\psi$ is true. Thse
+   introduction rule, if both $\phi$ and $\psi$ are known to
+   be true. 
+   \bigbreak
+
+   This report presents a Prolog-based algorithm that can
+   verify the validity of any proof in propositional logical 
+   that has been written exclusively using the rules of
+   natural deduction listed in the below table.
+
 
    \textbf{Valid Proof of de Morgan's Law} \\
    The following is a valid proof of one of de Morgan's laws.
