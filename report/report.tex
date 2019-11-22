@@ -122,19 +122,23 @@ Lab 2 $-$ DD1351}
    \bigbreak
 
    The subsequent code handles assumptions in the described
-   manner.
+   manner,
 
 \begin{verbatim}
 rule(Premises, [[R, Formula, assumption] | T], Verified) :-
    append(Verified, [[R, Formula, assumption]], VerifiedNew),
    verify_proof(Premises, T, VerifiedNew).
 \end{verbatim}
-  
-   Preimises is this. [[da...]] is proof box. Verified is
-   this. The append predicate appends the assumption to the
-   list of verified lines. Then, verify\_proof is recursively
-   called to verify the sub-proof within the box. 
-
+   
+   where \texttt{Premises} is the list of premises supplied 
+   in the input file, \\ 
+   \texttt{[[R, Formula, assumption] | T]} is the assumption
+   box, and \texttt{Verified} is the list of verified lines.
+   The \texttt{append/3} predicate appends the assumption line
+   to the list of verified lines. Then, \texttt{verify\_proof}
+   is recursively called to verify the sub-proof within the
+   box.
+   
    \textbf{Valid Proof of de Morgan's Law} \\
    The following is a valid proof of one of de Morgan's laws.
    Specifically, it proves the sequent 
