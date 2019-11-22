@@ -52,11 +52,11 @@ Lab 2 $-$ DD1351}
    a logic programming language that enables easy expression 
    of logical statements. To exemplify, the Prolog code
    
-   \begin{verbatim}
+\begin{verbatim}
    rule(_, [_, and(X, Y), andint(R1, R2)], Verified) :-
       member([R1, X, _], Verified),
       member([R2, Y, _], Verified).
-   \end{verbatim}
+\end{verbatim}
    
    states that $\phi \wedge \psi$ can be concluded, by the and
    introduction rule, if both $\phi$ and $\psi$ are known to
@@ -149,7 +149,7 @@ rule(Premises, [[R, Formula, assumption] | T], Verified) :-
    
    In Prolog notation, this proof is written:
 
-   \begin{verbatim}
+\begin{verbatim}
    [1,   neg(or(p, q)),          premise],
    [
       [2,   p,                   assumption],
@@ -164,7 +164,7 @@ rule(Premises, [[R, Formula, assumption] | T], Verified) :-
    ],
    [9,   neg(q),                 negint(6, 8)],
    [10,  and(neg(p), neg(q)),    andint(5, 9)]
-   \end{verbatim}
+\end{verbatim}
 
    The proof verification algorithm (view appendix)
    successfully identifies this as a valid proof. To do this,
