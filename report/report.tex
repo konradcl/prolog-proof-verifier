@@ -38,6 +38,9 @@
    urlcolor=urlblue
 }
 
+% Proofs
+\usepackage{logicproof}
+
 % Title
 \title{Natural Deduction Proof Verifier} 
 \author{Konrad M. L. Claesson\\ konradcl@kth.se\\ 
@@ -46,6 +49,7 @@ Lab 2 $-$ DD1351}
 
 \begin{document}
    \maketitle
+
 
    \section{Introduction}
    Natural deduction is a proof calculus comprised of a set of
@@ -135,14 +139,50 @@ Lab 2 $-$ DD1351}
    $\neg (p \vee q) \vdash \neg p \wedge \neg q$ with the
    proof
 
-\begin{verbatim}
-   INSERT PROOF
-\end{verbatim}
+   \begin{logicproof}{2}
+      \neg (p \lor q) & premise \\
+      \begin{subproof}
+         p & assumption \\
+         p \lor q & $\lor\mathrm{i}_1$ 2 \\
+         \perp & $\neg$e 3, 1
+      \end{subproof}
+      \neg p & $\neg$i 2-4 \\
+      \begin{subproof}
+         q & assumption \\
+         p \lor q & $\lor\mathrm{i}_2$ 6 \\
+         \perp & $\neg$e 7, 1
+      \end{subproof}
+      \neg q & $\neg\mathrm{i}$ 6-8 \\
+      \neg p \land \neg q & $\land\mathrm{i}$ 5, 9
+   \end{logicproof}
 
    is entered into the algorithm in the below format.
+   \newpage
 
 \begin{verbatim}
-   INSERT PROLOG-FORMATED PROOF
+   % Premises
+   [neg(or(p, q))].
+
+   % Conclusion
+   and(neg(p), neg(q)).
+   
+   % Proof
+   [
+      [1,      neg(or(p, q)),          premise],
+      [
+         [2,   p,                      assumption],
+         [3,   or(p, q),               orint1(2)],
+         [4,   cont,                   negel(3, 1)]
+      ],
+      [5,      neg(p),                 negint(2, 4)],
+      [
+         [6,   q,                      assumption],
+         [7,   or(p, q),               orint2(6)],
+         [8,   cont,                   negel(7, 1)]
+      ],
+      [9,      neg(q),                 negint(6, 8)],
+      [10,     and(neg(p), neg(q)),    andint(5, 9)]
+   ].
 \end{verbatim}
 
    In this format, the premises, conclusion and proof can be
@@ -171,7 +211,9 @@ Lab 2 $-$ DD1351}
    \texttt{valid\_proof/3}. 
    
 \begin{verbatim}
-   VALID PROOF CODE
+   valid_proof(Premises, Conclusion, Proof) :- 
+      verify_end(Conclusion, Proof),
+      verify_proof(Premises, Proof, []).
 \end{verbatim}
 
    This helper predicate takes in the
@@ -186,7 +228,10 @@ Lab 2 $-$ DD1351}
    sequent's conclusion. 
    
 \begin{verbatim}
-   VERIFY END CODE
+   verify_end(Conclusion, Proof) :-
+       last(Proof, Line),              
+       nth0(1, Line, ProofConclusion),
+       Conclusion = ProofConclusion.
 \end{verbatim}
    
    This is achieved by
@@ -206,7 +251,11 @@ Lab 2 $-$ DD1351}
    line-by-line, from top to bottom. 
    
 \begin{verbatim}
-   VERIFY PROOF CODE
+   verify_proof(_, [], _) :- !.
+   verify_proof(Premises, [H|T], Verified) :-
+      rule(Premises, H, Verified),
+      append(Verified, [H], VerifiedNew),
+      verify_proof(Premises, T, VerifiedNew).
 \end{verbatim}
 
    It validates each 
