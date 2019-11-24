@@ -1,0 +1,13 @@
+\babel@toc {english}{}
+\contentsline {section}{\numberline {1}Introduction}{2}{section.1}% 
+\contentsline {section}{\numberline {2}Method}{3}{section.2}% 
+\contentsline {subsection}{\numberline {2.1}Input Handling}{3}{subsection.2.1}% 
+\contentsline {subsection}{\numberline {2.2}The Recursive Helper Predicates}{6}{subsection.2.2}% 
+\contentsline {subsection}{\numberline {2.3}The Rule Predicate}{7}{subsection.2.3}% 
+\contentsline {subsubsection}{\numberline {2.3.1}Premise Handling}{7}{subsubsection.2.3.1}% 
+\contentsline {subsubsection}{\numberline {2.3.2}Handling of Inference Rules}{8}{subsubsection.2.3.2}% 
+\contentsline {subsubsection}{\numberline {2.3.3}Assumption Handling}{11}{subsubsection.2.3.3}% 
+\contentsline {subsection}{\numberline {2.4}Example of Proof Verification}{12}{subsection.2.4}% 
+\contentsline {subsubsection}{\numberline {2.4.1}Verification of a Valid Proof}{12}{subsubsection.2.4.1}% 
+\contentsline {subsubsection}{\numberline {2.4.2}Verification of an Invalid Proof}{14}{subsubsection.2.4.2}% 
+\contentsline {section}{\numberline {3}Results}{15}{section.3}% 

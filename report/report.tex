@@ -47,15 +47,32 @@
 % Proofs
 \usepackage{logicproof}
 
-% Title
-\title{Natural Deduction Proof Verifier} 
-\author{Konrad M. L. Claesson\\ konradcl@kth.se\\ 
-Lab 2 $-$ DD1351}
+% Code
+\usepackage{fancyvrb}
+
+% Cover Page
+
+\title{Prolog-Based Natural Deduction Proof Verification
+Algorithm}
+\author
+{
+   Konrad M. L. Claesson \\
+   konradcl@kth.se \\
+   Lab 2 $-$ DD1351
+}
 \date{\today}
 
 \begin{document}
    \maketitle
+   \thispagestyle{empty}   % remove page number
+   
+   % Restart numbering
+   \clearpage
+   \pagenumbering{arabic}
+   \newpage
 
+   \tableofcontents
+   \newpage
 
    \section{Introduction}
    Natural deduction is a proof calculus comprised of a set of
@@ -87,7 +104,7 @@ Lab 2 $-$ DD1351}
    that has been written exclusively using the rules of
    natural deduction listed in the below table.
 
-   \begin{figure}
+   \begin{figure}[h]
       \centering
       \includegraphics[scale=0.325]{inference-rules}
       \caption{Algorithm-Supported Proof Rules}
@@ -160,6 +177,7 @@ Lab 2 $-$ DD1351}
       \end{subproof}
       \neg q & $\neg\mathrm{i}$ 6-8 \\
       \neg p \land \neg q & $\land\mathrm{i}$ 5, 9
+   \label{de-morgan-proof}
    \end{logicproof}
 
    is entered into the algorithm in the below format.
@@ -578,42 +596,19 @@ rule(Premises, [[R, Formula, assumption] | T], Verified) :-
    In this subsection, two examples of how the proof
    verification algorithm works are provided. First, a
    detailed explanation of how the algorithm progresses from
-   accepting inputs to concluding the validity of a coherent 
+   accepting inputs to concluding the validity of a coherent
    proof is given. Then, a shorter description of the 
    algorithm's behavior in the event of an invalid proof is 
    presented.
    
    \subsubsection{Verification of a Valid Proof}
 
-   The following is a valid proof of one of de Morgan's laws.
-   Specifically, it proves the sequent 
-   $\neg(p \vee q) \vdash \neg p \wedge \neg q$.
-   \bigbreak
-
-   \includegraphics[scale=0.25]{de-morgan-valid}
-   
-   In Prolog notation, this proof is written:
-
-\begin{verbatim}
-   [1,      neg(or(p, q)),          premise],
-   [
-      [2,   p,                      assumption],
-      [3,   or(p, q),               orint1(2)],
-      [4,   cont,                   negel(3, 1)]
-   ],
-   [5,      neg(p),                 negint(2, 4)],
-   [
-      [6,   q,                      assumption],
-      [7,   or(p, q),               orint2(6)],
-      [8,   cont,                   negel(7, 1)]
-   ],
-   [9,      neg(q),                 negint(6, 8)],
-   [10,     and(neg(p), neg(q)),    andint(5, 9)]
-\end{verbatim}
-
-   The proof verification algorithm (view appendix)
-   successfully identifies this as a valid proof. To do this,
-   the algorithm initiates by calling \\
+   The proof of the sequent 
+   $\neg(p \lor q) \vdash \neg p \land \neg q$ provided on
+   page \pageref{de-morgan-proof} is valid. Appropriately, 
+   the proof verification algorithm (view appendix) also
+   identifies this as a valid proof. To do this, the 
+   algorithm starts out by calling \\
    \texttt{verify(InputFileName)}, which reads in the proof 
    from the specified file (see Section \ref{input-handling}).
    Then, \texttt{valid\_proof(Premises, Conclusion, Proof)} 
@@ -699,7 +694,7 @@ rule(Premises, [[R, Formula, assumption] | T], Verified) :-
 
    Lines six through nine repeat the 
    same deductive pattern as lines two through five.
-   The concluding line of the proof is arrived at by
+   The proof's concluding line is arrived at by
    utilizing the rule of conjunction introduction.
    The employment of this rule is validated by the
    below code
@@ -725,8 +720,30 @@ rule(Premises, [[R, Formula, assumption] | T], Verified) :-
    The subsequent text examines how the proof verification 
    algorithm handles this.
 
-   \includegraphics[scale=0.25]{de-morgan-invalid}
-   
+   \begin{logicproof}{2}
+      \neg (p \lor q) & premise \\
+      \begin{subproof}
+         p \lor q & assumption \\
+         \perp & $\neg$e 2, 1
+      \end{subproof}
+      \neg p \land \neg q & $\neg$i 2-3 
+   \label{de-morgan-proof-invalid}
+   \end{logicproof}
+   \bigbreak
+
+   \begin{figure}[h]
+   \centering
+\begin{BVerbatim}
+[1,      neg(or(p, q)),       premise],
+[
+   [2,   or(p, q),            assumption],
+   [3,   cont,                negel(2, 1)]
+],
+[4,      and(neg(p), neg(q))  negint(2, 3)]
+\end{BVerbatim}
+   \end{figure}
+   \bigbreak
+
    Recall that the negation introduction rule can be employed
    to conclude $\neg \phi$, for some formula $\phi$, if, and 
    only if, there exists a box starts with an assumption of
@@ -751,12 +768,13 @@ rule(Premises, [[R, Formula, assumption] | T], Verified) :-
    \section{Results}
    The algorithm correctly identified the validity of every
    minimal, rule-specific, proof. It also accurately verified
-   each of the \hl{XX} multi-step proofs.
+   all multi-step proofs.
    \bigbreak
 
    The algorithm along with the proofs in an input-ready
    format can be found by following this link: 
-   \url{github.com/konradcl/prolog-proof-verifier}.
+   \url{github.com/konradcl/prolog-proof-verifier}. The
+   algorithm has also been appended to this report.
 
 \end{document}
 
