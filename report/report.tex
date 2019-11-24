@@ -49,9 +49,16 @@
 
 % Code
 \usepackage{fancyvrb}
+\usepackage{listings}
+
+\lstset
+{
+  basicstyle=\small\ttfamily,
+  breaklines=true,
+  columns=fullflexible
+}
 
 % Cover Page
-
 \title{Prolog-Based Natural Deduction Proof Verification
 Algorithm}
 \author
@@ -104,11 +111,12 @@ Algorithm}
    that has been written exclusively using the rules of
    natural deduction listed in the below table.
 
-   \begin{figure}[h]
+   \begin{table}[h]
       \centering
       \includegraphics[scale=0.325]{inference-rules}
       \caption{Algorithm-Supported Proof Rules}
-   \end{figure}
+      \label{algorithm-supported-proof-rules}
+   \end{table}
 
    \section{Method}
    
@@ -120,7 +128,8 @@ Algorithm}
    derived formulas are known, and the required conditions for
    the employment of all used rules are defined. To this end,
    19 instances of the \texttt{rule/3} predicate were defined,
-   one for each rule from \hl{TABLE 1}, that given the
+   one for each rule from Table 
+   \ref{algorithm-supported-proof-rules}, that given the
    premises, a line, and all previous lines, returns 
    \texttt{true} if the passed in line can be inferred from
    the premises and previous lines, and \texttt{false}
@@ -775,6 +784,136 @@ rule(Premises, [[R, Formula, assumption] | T], Verified) :-
    format can be found by following this link: 
    \url{github.com/konradcl/prolog-proof-verifier}. The
    algorithm has also been appended to this report.
+
+   \newpage
+   \section*{Appendix}
+   
+\begin{lstlisting}
+:- discontiguous(rule/3).
+
+verify(InputFileName) :-
+  see(InputFileName),
+  read(Premises), read(Conclusion), read(Proof),
+  seen,
+  valid_proof(Premises, Conclusion, Proof).
+
+% The proof is valid if the proof ends with the sequent's
+% conclusion.
+valid_proof(Premises, Conclusion, Proof) :- 
+   verify_end(Conclusion, Proof),
+   verify_proof(Premises, Proof, []).
+
+% Verifies that proof ends with the sequent's conclusion.
+verify_end(Conclusion, Proof) :-
+    last(Proof, Line),              % line := last proof line
+    nth0(1, Line, ProofConclusion), % select ProofConclusion
+    Conclusion = ProofConclusion.
+
+% Recursively verifies the proof line by line.
+%
+% [H|T] = Proof
+% Verified:    previously verified proof lines
+% VerifiedNew: previously and newly verified proof lines
+verify_proof(_, [], _) :- !.
+verify_proof(Premises, [H|T], Verified) :-
+   rule(Premises, H, Verified),
+   append(Verified, [H], VerifiedNew),
+   verify_proof(Premises, T, VerifiedNew).
+
+% PREMISE
+rule(Premises, [_, Formula, premise], _) :-
+   member(Formula, Premises).
+
+% ASSUMPTION
+rule(Premises, [[R, Formula, assumption] | T], Verified) :-
+   append(Verified, [[R, Formula, assumption]], VerifiedNew),
+   verify_proof(Premises, T, VerifiedNew).
+
+%LAW OF EXCLUDED MIDDLE
+rule(_, [_, or(X, neg(X)), lem], _Verified).
+
+% COPY
+rule(_, [_, X, copy(R)], Verified) :-
+   member([R, X, _], Verified).
+
+% DOUBLE NEGATION INTRODUCTION
+rule(_, [_, neg(neg(X)), negnegint(R)], Verified) :-
+   member([R, X, _], Verified).
+
+% DOUBLE NEGATION ELIMINATION
+rule(_, [_, X, negnegel(R)], Verified) :-
+   member([R, neg(neg(X)), _], Verified).
+
+% AND INTRODUCTION
+rule(_, [_, and(X, Y), andint(R1, R2)], Verified) :-
+   member([R1, X, _], Verified),
+   member([R2, Y, _], Verified).
+
+% 1st AND ELIMINATION
+rule(_, [_, X, andel1(R)], Verified) :-
+   member([R, and(X, _), _], Verified).
+
+% 2nd AND ELIMINATION
+rule(_, [_, Y, andel2(R)], Verified) :-
+   member([R, and(_, Y), _], Verified).
+
+% 1st OR INTRODUCTION
+rule(_, [_, or(X, _), orint1(R)], Verified) :-
+   member([R, X, _], Verified).
+
+% 2nd OR INTRODUCTION
+rule(_, [_, or(_, X), orint2(R)], Verified) :-
+   member([R, X, _], Verified).
+
+% OR ELIMINATION (requires assumptions)
+rule(_, [_, X, orel(R, S1, S2, T1, T2)], Verified) :-
+   member([R, or(A, B), _], Verified),
+   
+   member([[S1, A, assumption] | TailS], Verified),
+   last(TailS, BoxConclusionS),
+   [S2, X, _] = BoxConclusionS,
+
+   member([[T1, B, assumption] | TailT], Verified),
+   last(TailT, BoxConclusionT),
+   [T2, X, _] = BoxConclusionT.
+
+% IMPLICATION INTRODUCTION
+rule(_, [_, imp(X, Y), impint(R1, R2)], Verified) :-
+   member([[R1, X, assumption] | T], Verified),
+   last([[R1, X, assumption] | T], BoxConclusion),
+   [R2, Y, _] = BoxConclusion.
+
+% IMPLICATION ELIMINATION
+rule(_, [_, Y, impel(R1, R2)], Verified) :-
+   member([R1, X, _], Verified),
+   member([R2, imp(X, Y), _], Verified).
+
+% NEGATION INTRODUCTION
+rule(_, [_, neg(X), negint(R1, R2)], Verified) :-
+   member([[R1, X, assumption] | T], Verified),
+   last(T, BoxConclusion),
+   [R2, cont, _] = BoxConclusion.
+
+% NEGATION ELIMINATION
+rule(_, [_, cont, negel(R1, R2)], Verified) :-
+   member([R1, X, _], Verified),
+   member([R2, neg(X), _], Verified).
+
+% CONTRADICTION ELIMINATION
+rule(_, [_, _X, contel(R)], Verified) :-
+   member([R, cont, _], Verified).
+
+% MODUS TOLLENS
+rule(_, [_, neg(X), mt(R1, R2)], Verified) :-
+   member([R1, imp(X, Y), _], Verified),
+   member([R2, neg(Y), _], Verified).
+
+% PROOF BY CONTRADICTION
+rule(_, [_, X, pbc(R1, R2)], Verified) :-
+   member([[R1, neg(X), assumption] | T], Verified),
+   last(T, BoxConclusion),
+   [R2, cont, _] = BoxConclusion.
+\end{lstlisting}
 
 \end{document}
 
